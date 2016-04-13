@@ -1,0 +1,7 @@
+archive
+*~
+*.pyc
+__pycache__
+gitter.sqlite
+.DS_Store
+token
