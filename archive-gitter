@@ -48,9 +48,12 @@ rooms = api_request('/rooms?_=%s' % uuid.uuid4().hex)
 for room in rooms:
     name = room['name']
     if room['oneToOne'] or room.get('security') == 'PRIVATE':
-        continue
+        dirname = 'archive-private'
+    else:
+        dirname = 'archive'
+    uri = room.get('uri', room['url'].lstrip('/'))
     print(name)
-    dest = os.path.join('archive', room['uri'] + '.json')
+    dest = os.path.join(dirname, uri + '.json')
     if '/' in dest:
         d = dest.rsplit('/', 1)[0]
         if not os.path.exists(d):
