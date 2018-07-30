@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
 """
 Fetch gitter archives of all your public rooms
-
-Currently hardcoded to only fetch archives of ipython and jupyter rooms
-
-Fetches the
 """
 # License: CC-0, Public Domain
 
 from datetime import datetime, timezone, timedelta
 import json
 import os
-from pprint import pprint
 import time
 import uuid
 
@@ -53,14 +48,17 @@ rooms = api_request('/rooms?_=%s' % uuid.uuid4().hex)
 for room in rooms:
     name = room['name']
     if room['oneToOne'] or room.get('security') == 'PRIVATE':
-        continue
+        dirname = 'archive-private'
+    else:
+        dirname = 'archive'
+    uri = room.get('uri', room['url'].lstrip('/'))
     print(name)
-    dest = os.path.join('archive', room['uri'] + '.json')
+    dest = os.path.join(dirname, uri + '.json')
     if '/' in dest:
         d = dest.rsplit('/', 1)[0]
         if not os.path.exists(d):
             os.makedirs(d)
-    
+
     if os.path.exists(dest):
         print("Checking for new messages: %s" % dest)
         with open(dest) as f:
@@ -81,7 +79,7 @@ for room in rooms:
         except Exception as e:
             print("Failed to get messages for %s: %s" % (name, e))
             continue
-    
+
     while messages:
         if key == 'beforeId':
              # left-extend before

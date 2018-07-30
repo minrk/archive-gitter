@@ -1,4 +1,5 @@
 archive
+archive-private
 *~
 *.pyc
 __pycache__
